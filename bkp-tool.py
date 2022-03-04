@@ -33,13 +33,19 @@ print(f'{style.HEADER}starting {prog} {version} {style.ENDC}')
 err = {}
 logs = {}
 
+rsync_fail, rsync = subprocess.getstatusoutput(f'which rsync')
+if rsync_fail == 1:
+    print(f'{style.WARNING}*** rsync not found! :({style.ENDC}')
+    sys.exit(1)
+    
+
 with open(args.file) as repo_backup:
     directories = repo_backup.readlines()
     if len(directories) == 0:
         print(f'{style.WARNING}*** the list for backup (file: {args.file}) is empty{style.ENDC}')
         sys.exit(0)
     for dir in directories:
-        backup_run = subprocess.run(['rsync', '-avz', '--partial', '--ignore-errors', '--delete', f'{args.src}/{dir.strip()}', f'{args.dst}/{dir.strip()}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        backup_run = subprocess.run([rsync, '-avz', '--partial', '--ignore-errors', '--delete', f'{args.src}/{dir.strip()}', f'{args.dst}/{dir.strip()}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if backup_run.returncode == 0:
             logs.update({dir: 'success!'})
         if backup_run.returncode != 0:
