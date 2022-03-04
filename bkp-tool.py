@@ -38,13 +38,11 @@ if path.exists(args.file) == False:
     print(f'{style.WARNING}*** {style.UNDERLINE}{args.file}{style.ENDC}{style.WARNING} not found! :({style.ENDC}')
     sys.exit(1)
 
-
 rsync_fail, rsync = subprocess.getstatusoutput(f'which rsync')
 if rsync_fail == 1:
     print(f'{style.WARNING}*** rsync not found! :({style.ENDC}')
     sys.exit(1)
     
-
 with open(args.file) as repo_backup:
     directories = repo_backup.readlines()
     if len(directories) == 0:
