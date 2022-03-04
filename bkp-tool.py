@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 import argparse
 import subprocess
-import sys
+from sys import exit
+from os import path
+
+version = 0.2
+backup_dir = 'backup_dir.list'
+prog = 'bkp-tool'
 
 class style():
     HEADER = '\033[95m'
@@ -13,11 +18,6 @@ class style():
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-
-# Variáveis
-version = 0.1
-backup_dir = 'backup_dir.list'
-prog = 'bkp-tool'
 
 parser = argparse.ArgumentParser(description='bkp-tool - file backup tool using rsync', prog=f'{prog}')
 parser.add_argument('src', help='specify the source directory')
@@ -33,13 +33,22 @@ print(f'{style.HEADER}starting {prog} {version} {style.ENDC}')
 err = {}
 logs = {}
 
+if path.exists(args.file) == False:
+    print(f'{style.WARNING}*** {style.UNDERLINE}{args.file}{style.ENDC}{style.WARNING} not found! :({style.ENDC}')
+    exit(1)
+
+rsync_fail, rsync = subprocess.getstatusoutput(f'which rsync')
+if rsync_fail == 1:
+    print(f'{style.WARNING}*** rsync not found! :({style.ENDC}')
+    exit(1)
+    
 with open(args.file) as repo_backup:
     directories = repo_backup.readlines()
     if len(directories) == 0:
         print(f'{style.WARNING}*** the list for backup (file: {args.file}) is empty{style.ENDC}')
-        sys.exit(0)
+        exit(0)
     for dir in directories:
-        backup_run = subprocess.run(['rsync', '-avz', '--partial', '--ignore-errors', '--delete', f'{args.src}/{dir.strip()}', f'{args.dst}/{dir.strip()}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        backup_run = subprocess.run([rsync, '-avz', '--partial', '--ignore-errors', '--delete', f'{args.src}/{dir.strip()}', f'{args.dst}/{dir.strip()}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if backup_run.returncode == 0:
             logs.update({dir: 'success!'})
         if backup_run.returncode != 0:
