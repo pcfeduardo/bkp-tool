@@ -10,7 +10,7 @@ script loops through all subdirectories of source and syncs to destination folde
 
 Example:
 ```
-./bkp-tool /var/data/movies /backup/movies
+./bkp-tool.py /var/data/movies /backup/movies
 ```
 
 ## optional arguments
