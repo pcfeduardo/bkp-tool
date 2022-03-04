@@ -4,7 +4,7 @@ import subprocess
 from sys import exit
 from os import path
 
-version = 0.2
+version = 0.3
 backup_dir = 'backup_dir.list'
 prog = 'bkp-tool'
 
