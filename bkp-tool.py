@@ -2,6 +2,7 @@
 import argparse
 import subprocess
 import sys
+from os import path
 
 class style():
     HEADER = '\033[95m'
@@ -32,6 +33,11 @@ print(f'{style.HEADER}starting {prog} {version} {style.ENDC}')
 
 err = {}
 logs = {}
+
+if path.exists(args.file) == False:
+    print(f'{style.WARNING}*** {style.UNDERLINE}{args.file}{style.ENDC}{style.WARNING} not found! :({style.ENDC}')
+    sys.exit(1)
+
 
 rsync_fail, rsync = subprocess.getstatusoutput(f'which rsync')
 if rsync_fail == 1:
