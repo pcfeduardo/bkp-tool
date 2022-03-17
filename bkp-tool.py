@@ -7,6 +7,15 @@ from os import environ
 import datetime
 from discord_webhook import DiscordWebhook
 
+def discord_notification(content):
+    if 'DISCORD_WEBHOOK' in environ:
+        webhook = environ['DISCORD_WEBHOOK']
+        webhook = DiscordWebhook(url=webhook, content=content)
+        webhook.execute()
+        return True
+    else:
+        return False
+
 version = 0.3
 backup_dir = 'backup_dir.list'
 prog = 'bkp-tool'
@@ -32,10 +41,13 @@ parser.add_argument('--version', '-v', action='version', version=f'%(prog)s {ver
 args = parser.parse_args()
 
 def discord_notification(content):
-    if environ['DISCORD_WEBHOOK']:
-        webhook = environ['DISCORD_WEBHOOK']     
+    if 'DISCORD_WEBHOOK' in environ:
+        webhook = environ['DISCORD_WEBHOOK']
         webhook = DiscordWebhook(url=webhook, content=content)
         webhook.execute()
+        return True
+    else:
+        return False
 
 print(f'{style.HEADER}{datetime.datetime.now()} - starting {prog} {version} {style.ENDC}')
 discord_notification(f'{datetime.datetime.now()} - starting backup')
