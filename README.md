@@ -1,4 +1,9 @@
 # bkp-tool
+## requirements
+- discord-webhook
+```
+pip3 install discord-webhook
+```
 ## about the bkp-tool
 script loops through all subdirectories of source and syncs to destination folder.
 
