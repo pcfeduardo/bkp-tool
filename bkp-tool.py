@@ -3,6 +3,7 @@ import argparse
 import subprocess
 from sys import exit
 from os import path
+import datetime
 
 version = 0.3
 backup_dir = 'backup_dir.list'
@@ -28,7 +29,7 @@ parser.add_argument('--show-errors', action='store_true', help='show only error 
 parser.add_argument('--version', '-v', action='version', version=f'%(prog)s {version}')
 args = parser.parse_args()
 
-print(f'{style.HEADER}starting {prog} {version} {style.ENDC}')
+print(f'{style.HEADER}{datetime.datetime.now()} - starting {prog} {version} {style.ENDC}')
 
 err = {}
 logs = {}
@@ -48,7 +49,7 @@ with open(args.file) as repo_backup:
         print(f'{style.WARNING}*** the list for backup (file: {args.file}) is empty{style.ENDC}')
         exit(0)
     for dir in directories:
-        print(f'{style.OKBLUE}backuping {dir.strip()}...{style.ENDC}')
+        print(f'{style.OKBLUE}{datetime.datetime.now()} - backuping {dir.strip()}...{style.ENDC}')
         backup_run = subprocess.run([rsync, '-avz', '--partial', '--ignore-errors', '--delete', f'{args.src}/{dir.strip()}', f'{args.dst}/{dir.strip()}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if backup_run.returncode == 0:
             logs.update({dir: 'success!'})
