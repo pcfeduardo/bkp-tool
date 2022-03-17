@@ -48,6 +48,7 @@ with open(args.file) as repo_backup:
         print(f'{style.WARNING}*** the list for backup (file: {args.file}) is empty{style.ENDC}')
         exit(0)
     for dir in directories:
+        print(f'{style.OKBLUE}backuping {dir.strip()}...{style.ENDC}')
         backup_run = subprocess.run([rsync, '-avz', '--partial', '--ignore-errors', '--delete', f'{args.src}/{dir.strip()}', f'{args.dst}/{dir.strip()}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if backup_run.returncode == 0:
             logs.update({dir: 'success!'})
