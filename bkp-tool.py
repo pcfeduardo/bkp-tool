@@ -3,7 +3,9 @@ import argparse
 import subprocess
 from sys import exit
 from os import path
+from os import environ
 import datetime
+from discord_webhook import DiscordWebhook
 
 version = 0.3
 backup_dir = 'backup_dir.list'
@@ -29,7 +31,14 @@ parser.add_argument('--show-errors', action='store_true', help='show only error 
 parser.add_argument('--version', '-v', action='version', version=f'%(prog)s {version}')
 args = parser.parse_args()
 
+def discord_notification(content):
+    if environ['DISCORD_WEBHOOK']:
+        webhook = environ['DISCORD_WEBHOOK']     
+        webhook = DiscordWebhook(url=webhook, content=content)
+        webhook.execute()
+
 print(f'{style.HEADER}{datetime.datetime.now()} - starting {prog} {version} {style.ENDC}')
+discord_notification(f'{datetime.datetime.now()} - starting backup')
 
 err = {}
 logs = {}
@@ -50,6 +59,7 @@ with open(args.file) as repo_backup:
         exit(0)
     for dir in directories:
         print(f'{style.OKBLUE}{datetime.datetime.now()} - backuping {dir.strip()}...{style.ENDC}')
+        discord_notification(f'{datetime.datetime.now()} - backuping {dir.strip()}...')
         backup_run = subprocess.run([rsync, '-avz', '--partial', '--ignore-errors', '--delete', f'{args.src}/{dir.strip()}', f'{args.dst}/{dir.strip()}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if backup_run.returncode == 0:
             logs.update({dir: 'success!'})
@@ -60,16 +70,20 @@ def show_logs():
     if args.show_logs == True:
         for folder in logs:
             print(f'{style.OKGREEN}[successful] {folder.strip()} - {logs[folder].strip()}{style.ENDC}')
+            discord_notification(f'[successful] {folder.strip()} - {logs[folder].strip()}')
 
 def show_errors():
     if args.show_logs or args.show_errors == True:
         for err_dir in err:
             print(f'{style.FAIL}[error] directory: {style.UNDERLINE}{err_dir.strip()}{style.ENDC}{style.FAIL} | details: {err[err_dir].strip()}{style.ENDC}')
+            discord_notification(f'[error] directory: {err_dir.strip()} | details: {err[err_dir].strip()}')
 
 if len(err) == 0:
     print(f'\n{style.OKGREEN}*** congratulations! all directories have been backed up successfully!{style.FAIL}\n')
+    discord_notification(f'*** congratulations! all directories have been backed up successfully!')
     show_logs()
 else:
     print(f'\n{style.FAIL}*** problems detected when performing the backup!{style.ENDC}\n')
+    discord_notification(f'*** problems detected when performing the backup!')
     show_logs()
     show_errors()
