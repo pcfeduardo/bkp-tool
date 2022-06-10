@@ -54,7 +54,7 @@ with open(args.file) as repo_backup:
         exit(0)
     for dir in directories:
         print(f'{style.OKBLUE}{datetime.datetime.now()} - backuping {dir.strip()}...{style.ENDC}')
-        backup_run = subprocess.run([rsync, '-avz', '--partial', '--ignore-errors', '--delete', f'{args.src}/{dir.strip()}', f'{args.dst}/{dir.strip()}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        backup_run = subprocess.run([rsync, '-avz', '--partial', '--ignore-errors', '--delete', f'{args.src}/{dir.strip()}', f'{args.dst}/'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if backup_run.returncode == 0:
             logs.update({dir: 'success!'})
         if backup_run.returncode != 0:
