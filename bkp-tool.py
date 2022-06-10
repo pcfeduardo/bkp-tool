@@ -32,7 +32,7 @@ parser.add_argument('--show-errors', action='store_true', help='show only error 
 parser.add_argument('--version', '-v', action='version', version=f'%(prog)s {__version__}')
 args = parser.parse_args()
 
-print(f'{style.HEADER}{datetime.datetime.now()} - starting {prog} {version} {style.ENDC}')
+print(f'{style.HEADER}{datetime.datetime.now()} - starting {prog} {__version__} {style.ENDC}')
 print(f'{style.HEADER}{datetime.datetime.now()} - written by {__author__}')
 
 err = {}
